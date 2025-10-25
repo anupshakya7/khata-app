@@ -91,9 +91,8 @@
                     </a>
                 </li> <!-- end Dashboard Menu -->
 
-
+                <!-- User Management -->
                 <li class="menu-title"><i class="ri-more-fill"></i> <span>User</span></li>
-
                 <li class="nav-item">
                     <a class="nav-link menu-link {{ request()->routeIs('user.index','user.create') ? 'active':'' }}" href="#userDropdown" data-bs-toggle="collapse" role="button"
                         aria-expanded="{{request()->routeIs('user.index','user.create') ? 'true':'false'}}" aria-controls="userDropdown">
@@ -106,6 +105,25 @@
                             </li>
                             <li class="nav-item">
                                 <a href="{{ route('user.create') }}" class="nav-link {{ request()->routeIs('user.create') ? 'active':'' }} ">Create</a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+
+                <!-- Saving -->
+                <li class="menu-title"><i class="ri-more-fill"></i> <span>Saving</span></li>
+                <li class="nav-item">
+                    <a class="nav-link menu-link {{ request()->routeIs('saving.index','saving.create') ? 'active':'' }}" href="#savingDropdown" data-bs-toggle="collapse" role="button"
+                        aria-expanded="{{request()->routeIs('user.index','user.create') ? 'true':'false'}}" aria-controls="savingDropdown">
+                        <i class="ri-money-dollar-circle-fill"></i> <span>Saving Management</span>
+                    </a>
+                    <div class="collapse menu-dropdown {{ request()->routeIs('saving.index', 'saving.create') ? 'show' : '' }}" id="savingDropdown">
+                        <ul class="nav nav-sm flex-column">
+                            <li class="nav-item">
+                                <a href="{{ route('saving.index') }}" class="nav-link {{ request()->routeIs('saving.index') ? 'active':'' }} ">List</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('saving.create') }}" class="nav-link {{ request()->routeIs('saving.create') ? 'active':'' }} ">Create</a>
                             </li>
                         </ul>
                     </div>

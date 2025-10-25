@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\SavingController;
 use App\Http\Controllers\UserController;
 use App\Mail\UserVerificationMail;
 use App\Models\User;
@@ -67,6 +68,7 @@ Route::middleware('check.auth')->group(function () {
 
     //User
     Route::resources([
-        'user' => UserController::class
+        'user' => UserController::class,
+        'saving' => SavingController::class
     ]);
 });
