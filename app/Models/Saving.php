@@ -11,4 +11,8 @@ class Saving extends Model
     public function user(){
         return $this->belongsTo(User::class,'user_id');
     }
+
+    public function history(){
+        return $this->hasMany(SavingHistory::class,'saving_id');
+    }
 }

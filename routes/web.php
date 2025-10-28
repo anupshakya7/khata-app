@@ -71,4 +71,7 @@ Route::middleware('check.auth')->group(function () {
         'user' => UserController::class,
         'saving' => SavingController::class
     ]);
+
+    //Saving Check User
+    Route::get('saving/verify/check-user',[SavingController::class,'checkUser'])->name('saving.check-user');
 });

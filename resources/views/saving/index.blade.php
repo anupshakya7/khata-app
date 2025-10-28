@@ -32,7 +32,7 @@
                                     <th scope="col" style="width: 30%;">Full Name</th>
                                     <th scope="col" style="width: 20%;">Withdraw Amount</th>
                                     <th scope="col" style="width: 10%;">Remaining Amount</th>
-                                    <th scope="col" style="width: 10%;">Total Amount</th>
+                                    <th scope="col" style="width: 10%;">Total Amount(With Withdraw Amount)</th>
                                     <th scope="col" style="width: 20%;">Changed At</th>
                                     <th scope="col" style="width: 30%;">Action</th>
                                 </tr>
@@ -40,28 +40,27 @@
 
                             <tbody>
                                 @forelse ($savings as $saving)
+                                    @php
+                                        $totalAmount = $saving->history()->where('category',1)->sum('amount');
+                                        $remaingAmount = $saving->amount;
+                                        $withdrawAmount = $totalAmount - $remaingAmount;
+                                    @endphp
                                     <tr>
                                         <td>{{ $saving->serial_no }}</td>
-                                        <td>{{ $saving->name }}</td>
-                                        <td>{{ $saving->email }}</td>
-                                        @php
-                                            $status = $saving->email_verified_at ? 'Verified' : 'Unverified';
-                                            $color = $saving->email_verified_at ? 'success' : 'danger';
-                                            $icon = $saving->email_verified_at ? 'ri-checkbox-circle-line':'ri-alert-line';
-                                        @endphp
-                                        <td><span
-                                                class="badge border border-{{ $color }} text-{{ $color }}"><i class="{{ $icon }}"></i>{{ $status }}</span>
-                                        </td>
-                                        <td><span class="badge bg-success"><i class="ri-shield-user-line"></i> Admin</span></td>
-                                        <td>{{ \Carbon\Carbon::parse($saving->created_at)->format('d M, Y') }}</td>
+                                        <td>{{ $saving->user->name }}</td>
+                                        <td>{{$withdrawAmount}}</td>
+                                        <td>{{$remaingAmount}}</td>
+                                        <td>{{ $totalAmount }}</td>
+                                        <td>{{ \Carbon\Carbon::parse($saving->updated_at)->format('d M, Y') }}</td>
                                         <td>
-                                            <a href="{{ route('user.edit', $saving) }}" type="button"
-                                                class="btn btn-outline-info btn-icon waves-effect waves-light material-shadow-none"><i
-                                                    class="ri-edit-line"></i></a>
+                                            <a href="" type="button"
+                                                class="btn btn-outline-info btn-icon waves-effect waves-light material-shadow-none"><i class="ri-history-line"></i></a>
+                                            <a href="{{ route('saving.create',['user_id'=>$saving->user->id]) }}" type="button"
+                                                class="btn btn-outline-success btn-icon waves-effect waves-light material-shadow-none"><i class="ri-add-line"></i></a>
                                             <button
                                                 class="btn btn-outline-danger btn-icon waves-effect waves-light material-shadow-none remove-item-btn"
                                                 data-item-id="{{ $saving->id }}"
-                                                data-item-name="{{ $saving->name }}"
+                                                data-item-name="{{ $saving->user->name }}"
                                                 data-bs-toggle="modal" data-bs-target="#zoomInModal"><i
                                                     class="ri-delete-bin-line"></i></button>
                                         </td>

@@ -50,6 +50,6 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     public function savings(){
-        return $this->hasMany(Saving::class,'user_id');
+        return $this->hasOne(Saving::class,'user_id');
     }
 }
