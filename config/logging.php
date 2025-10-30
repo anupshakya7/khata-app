@@ -149,6 +149,14 @@ return [
             'level' => env('LOG_LEVEL', 'debug'),
             'replace_placeholders' => true,
             'days' => 14
+        ],
+
+        'saving' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/saving.log'),
+            'level' => env('LOG_LEVEL', 'debug'),
+            'replace_placeholders' => true,
+            'days' => 14
         ]
 
     ],

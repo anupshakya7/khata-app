@@ -23,6 +23,7 @@
 
                             <div class="card-body p-4">
                                 <div class="text-center mt-2">
+                                    <img src="{{ URL::asset('assets/images/logo/2c.png') }}" alt="" height="100">
                                     <h5 class="text-primary">Welcome Back!</h5>
                                     <p class="text-muted">Sign in to manage your savings with SmartSave.</p>
                                 </div>

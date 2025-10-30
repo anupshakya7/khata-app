@@ -1,5 +1,5 @@
 @extends('layout.web')
-@section('title', 'Saving List')
+@section('title', 'User List')
 @section('content')
 
     @component('components.breadcrumb')

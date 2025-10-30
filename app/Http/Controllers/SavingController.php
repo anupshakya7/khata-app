@@ -22,13 +22,14 @@ class SavingController extends Controller
      */
     public function index()
     {
-        $savings = Saving::with('user','history')->paginate(10);
+        $savings = Saving::with('user', 'history')->paginate(10);
         $savings = PaginationHelper::addSerialNo($savings);
 
-        return view('saving.index',compact('savings'));
+        return view('saving.index', compact('savings'));
     }
 
-    public function checkUser(){
+    public function checkUser()
+    {
         return view('saving.check-user');
     }
 
@@ -39,7 +40,7 @@ class SavingController extends Controller
     {
         $users = User::whereNotNull('email_verified_at')->get();
 
-        return view('saving.create',compact('users'));
+        return view('saving.create', compact('users'));
     }
 
     /**
@@ -51,30 +52,40 @@ class SavingController extends Controller
             'user_id' => 'required|exists:users,id',
             'category' => [
                 'required',
-                Rule::when(function() use($request){
-                    return !Saving::where('user_id',$request->user_id)->exists();
-                },'not_in:0')
+                Rule::when(function () use ($request) {
+                    return !Saving::where('user_id', $request->user_id)->exists();
+                }, 'not_in:0')
             ],
             'amount' => 'required',
             'note' => 'nullable'
-        ],[
+        ], [
             'category.not_in' => 'You cannot select category withdraw because this user has no previous savings.'
         ]);
 
-         try{
+        try {
             DB::beginTransaction();
-            $checkRecord = Saving::where('user_id',$validatedData['user_id'])->first();
+            $checkRecord = Saving::with('history')->where('user_id', $validatedData['user_id'])->first();
             $historyData = $validatedData;
 
-            if($checkRecord){
+            if ($checkRecord) {
                 $amount = $validatedData['amount'];
 
-                if($validatedData['category'] == "0"){
-                    if($amount > $checkRecord->amount){
-                        return redirect()->back()->with('warning','Insufficient balance for withdrawal.');
+                if ($validatedData['category'] == "0") {
+                    if ($amount > $checkRecord->amount) {
+                        return redirect()->back()->with('warning', 'Insufficient balance for withdrawal.');
                     }
                     $checkRecord->amount -= $amount;
-                }elseif($validatedData['category'] == "1"){
+                } elseif ($validatedData['category'] == "1" || $validatedData['category'] == "2") {
+                    if ($validatedData['category'] == "2") {
+                        $totalWithdraw = $checkRecord->history()->where('category', "0")->sum('amount');
+                        $totalWithdrawPaid = $checkRecord->history()->where('category', "2")->sum('amount');
+                        $remainingWithdraw = $totalWithdraw - $totalWithdrawPaid;
+
+                        if ($amount > $remainingWithdraw) {
+                            return redirect()->back()->with('warning', 'Payment failed: You’re trying to pay more than the withdrawn amount.');
+                        }
+                    }
+
                     $checkRecord->amount += $amount;
                 }
 
@@ -82,22 +93,25 @@ class SavingController extends Controller
 
                 $checkRecord->save();
                 $saving = $checkRecord;
-            }else{
+            } else {
+                if ($validatedData['category'] == "2") {
+                    return redirect()->back()->with('warning', 'Payment failed: You’re trying to pay more than the withdrawn amount.');
+                }
 
                 unset($validatedData['category']);
                 $saving = Saving::create($validatedData);
             }
-            
+
             //Removing User Field
             unset($historyData['user_id']);
             $saving->history()->create($historyData);
 
             DB::commit();
-            return redirect()->route('saving.index')->with('success','Successfully created new transaction');
-        }catch(Exception $e){
+            return redirect()->route('saving.index')->with('success', 'Successfully created new transaction');
+        } catch (Exception $e) {
             DB::rollBack();
-            Log::channel('user')->error($e->getMessage());
-            return redirect()->back()->with('error','Fail to create new transaction');
+            Log::channel('saving')->error($e->getMessage());
+            return redirect()->back()->with('error', 'Fail to create new transaction');
         }
     }
 
@@ -130,6 +144,13 @@ class SavingController extends Controller
      */
     public function destroy(Saving $saving)
     {
-        //
+        try {
+            $saving->delete();
+
+            return redirect()->route('saving.index')->with('success', 'Successfully deleted transaction');
+        } catch (Exception $e) {
+            Log::channel('saving')->error($e->getMessage());
+            return redirect()->back()->with('error', 'Fail to delete transaction');
+        }
     }
 }
