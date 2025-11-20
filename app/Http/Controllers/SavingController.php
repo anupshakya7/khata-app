@@ -80,7 +80,7 @@ class SavingController extends Controller
                         $totalWithdraw = $checkRecord->history()->where('category', "0")->sum('amount');
                         $totalWithdrawPaid = $checkRecord->history()->where('category', "2")->sum('amount');
                         $remainingWithdraw = $totalWithdraw - $totalWithdrawPaid;
-
+ 
                         if ($amount > $remainingWithdraw) {
                             return redirect()->back()->with('warning', 'Payment failed: You’re trying to pay more than the withdrawn amount.');
                         }
@@ -152,5 +152,11 @@ class SavingController extends Controller
             Log::channel('saving')->error($e->getMessage());
             return redirect()->back()->with('error', 'Fail to delete transaction');
         }
+    }
+
+    public function history(Saving $saving){
+        $saving->load('user','history');
+
+        return view('saving.history', compact('saving'));
     }
 }

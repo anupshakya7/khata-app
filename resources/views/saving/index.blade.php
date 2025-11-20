@@ -53,7 +53,7 @@
                                         <td>{{ $totalAmount }}</td>
                                         <td>{{ \Carbon\Carbon::parse($saving->updated_at)->format('d M, Y') }}</td>
                                         <td>
-                                            <a href="" type="button"
+                                            <a href="{{ route('saving.history',$saving) }}" type="button"
                                                 class="btn btn-outline-info btn-icon waves-effect waves-light material-shadow-none"><i class="ri-history-line"></i></a>
                                             <a href="{{ route('saving.create',['user_id'=>$saving->user->id]) }}" type="button"
                                                 class="btn btn-outline-success btn-icon waves-effect waves-light material-shadow-none"><i class="ri-add-line"></i></a>

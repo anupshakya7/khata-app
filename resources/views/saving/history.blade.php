@@ -7,7 +7,7 @@
             Saving Management
         @endslot
         @slot('subtitle')
-            Saving List
+            Saving History {{ $saving->user->name }}
         @endslot
     @endcomponent
     <div class="row">
@@ -15,11 +15,11 @@
         <div class="col-xxl-12">
             <div class="card card-height-100">
                 <div class="card-header align-items-center d-flex">
-                    <h4 class="card-title mb-0 flex-grow-1">Saving List</h4>
+                    <h4 class="card-title mb-0 flex-grow-1">Saving History {{ $saving->user->name }}</h4>
                     <div class="flex-shrink-0">
-                        <a href="{{ route('saving.create') }}" type="button"
+                        <a href="{{ route('saving.index') }}" type="button"
                             class="btn btn-success btn-icon waves-effect waves-light material-shadow-none"><i
-                                class="ri-add-circle-line"></i></a>
+                                class="ri-arrow-left-line"></i></a>
                     </div>
                 </div><!-- end card header -->
 
@@ -29,40 +29,41 @@
                             <thead>
                                 <tr>
                                     <th scope="col" style="width: 5%;">S.No.</th>
-                                    <th scope="col" style="width: 30%;">Full Name</th>
-                                    <th scope="col" style="width: 20%;">Withdraw Amount</th>
-                                    <th scope="col" style="width: 10%;">Remaining Amount</th>
-                                    <th scope="col" style="width: 10%;">Total Amount(With Withdraw Amount)</th>
-                                    <th scope="col" style="width: 20%;">Changed At</th>
-                                    <th scope="col" style="width: 30%;">Action</th>
+                                    <th scope="col" style="width: 20%;">Amount</th>
+                                    <th scope="col" style="width: 10%;">Date</th>
+                                    <th scope="col" style="width: 20%;">Type</th>
                                 </tr>
                             </thead>
 
                             <tbody>
-                                @forelse ($savings as $saving)
-                                    @php
-                                        $totalAmount = $saving->history()->where('category',1)->sum('amount');
-                                        $remaingAmount = $saving->amount;
-                                        $withdrawAmount = $totalAmount - $remaingAmount;
-                                    @endphp
+                                @php
+                                    $histories = $saving->history;
+                                    $sno = 1;
+                                    $totalAmount = 0;
+                                @endphp
+
+                                @forelse ($histories as $history)
                                     <tr>
-                                        <td>{{ $saving->serial_no }}</td>
-                                        <td>{{ $saving->user->name }}</td>
-                                        <td>{{$withdrawAmount}}</td>
-                                        <td>{{$remaingAmount}}</td>
-                                        <td>{{ $totalAmount }}</td>
-                                        <td>{{ \Carbon\Carbon::parse($saving->updated_at)->format('d M, Y') }}</td>
+                                        <td> {{ $sno++ }}</td>
+                                        <td>{{$history->amount}}</td>
+                                        <td>{{Carbon\Carbon::parse($history->created_at)->format('d M, Y')}}</td>
+                                        @php
+                                            if($history->category == 0){
+                                                $color = 'danger';
+                                                $type = 'Withdraw';
+                                                $totalAmount -=$history->amount;
+                                            }elseif($history->category == 1){
+                                                $color = 'success';
+                                                $type = 'Deposit';
+                                                $totalAmount +=$history->amount;
+                                            }elseif($history->category == 2){
+                                                $color = 'primary';
+                                                $type = 'Paid Withdrawal';
+                                                $totalAmount +=$history->amount;
+                                            }
+                                        @endphp
                                         <td>
-                                            <a href="" type="button"
-                                                class="btn btn-outline-info btn-icon waves-effect waves-light material-shadow-none"><i class="ri-history-line"></i></a>
-                                            <a href="{{ route('saving.create',['user_id'=>$saving->user->id]) }}" type="button"
-                                                class="btn btn-outline-success btn-icon waves-effect waves-light material-shadow-none"><i class="ri-add-line"></i></a>
-                                            <button
-                                                class="btn btn-outline-danger btn-icon waves-effect waves-light material-shadow-none remove-item-btn"
-                                                data-item-id="{{ $saving->id }}"
-                                                data-item-name="{{ $saving->user->name }}"
-                                                data-bs-toggle="modal" data-bs-target="#zoomInModal"><i
-                                                    class="ri-delete-bin-line"></i></button>
+                                            <span class="badge bg-{{ $color }}">{{$type}}</span>
                                         </td>
                                     </tr>
                                 @empty
@@ -70,9 +71,14 @@
                                         <td colspan="12" class="text-center">No Result Found</td>
                                     </tr>
                                 @endforelse
+                                <tr style="border-top: 2px solid grey;">
+                                    <td><b>Total</b></td>
+                                    <td>{{$totalAmount}}</td>
+                                    <td>{{now()->format('d M, Y')}}</td>
+                                    <td><b>Total</b></td>
+                                </tr>
                             </tbody><!-- end tbody -->
                         </table><!-- end table -->
-                        {{ $savings->links('pagination::bootstrap-5') }}
                     </div><!-- end table responsive -->
                 </div><!-- end card body -->
             </div><!-- end card -->

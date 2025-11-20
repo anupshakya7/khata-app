@@ -66,11 +66,15 @@ Route::middleware('check.auth')->group(function () {
     //Logout
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-    //User
     Route::resources([
         'user' => UserController::class,
         'saving' => SavingController::class
     ]);
+
+    //Saving History
+    Route::prefix('saving/history')->name('saving.')->group(function(){
+        Route::get('/{saving}',[SavingController::class,'history'])->name('history');
+    });
 
     //Saving Check User
     Route::get('saving/verify/check-user',[SavingController::class,'checkUser'])->name('saving.check-user');
