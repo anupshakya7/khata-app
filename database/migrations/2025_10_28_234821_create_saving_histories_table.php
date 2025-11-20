@@ -16,6 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('saving_id');
             $table->string('category')->comment('0=Withdraw,1=Deposit,2=Paid Withdrawal');
             $table->string('amount');
+            $table->string('date');
             $table->string('note')->nullable();
             $table->timestamps();
 

@@ -51,7 +51,7 @@
                                         <td>{{$withdrawAmount}}</td>
                                         <td>{{$remaingAmount}}</td>
                                         <td>{{ $totalAmount }}</td>
-                                        <td>{{ \Carbon\Carbon::parse($saving->updated_at)->format('d M, Y') }}</td>
+                                        <td>{{\App\Helpers\ConvertToBS::convert($saving->date) }}</td>
                                         <td>
                                             <a href="{{ route('saving.history',$saving) }}" type="button"
                                                 class="btn btn-outline-info btn-icon waves-effect waves-light material-shadow-none"><i class="ri-history-line"></i></a>

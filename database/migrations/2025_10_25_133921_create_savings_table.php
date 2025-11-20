@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('user_id');
             $table->string('amount');
+            $table->string('date');
             $table->string('note')->nullable();
             $table->timestamps();
 

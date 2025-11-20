@@ -74,6 +74,19 @@
                                     @enderror
                                 </div>
                             </div><!--end col-->
+                              <div class="col-6">
+                                <div class="mb-3">
+                                    <label for="date" class="form-label">Date<span
+                                            class="text-danger">*</span></label>
+                                    <input type="text" class="form-control @error('date') is-invalid  @enderror"
+                                        name="date" value="{{ old('date') }}" placeholder="Select Date" id="nepali-datepicker">
+                                    @error('date')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+                            </div><!--end col-->
                             <div class="col-12">
                                 <div class="mb-3">
                                     <label for="note" class="form-label">Notes</label>
@@ -104,4 +117,5 @@
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
     <script src="{{ URL::asset('assets/js/pages/select2.init.js') }}"></script>
+    @include('partials.nepali-date')
 @endsection

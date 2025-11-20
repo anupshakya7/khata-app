@@ -57,6 +57,7 @@ class SavingController extends Controller
                 }, 'not_in:0')
             ],
             'amount' => 'required',
+            'date' => 'required',
             'note' => 'nullable'
         ], [
             'category.not_in' => 'You cannot select category withdraw because this user has no previous savings.'
@@ -70,7 +71,7 @@ class SavingController extends Controller
             if ($checkRecord) {
                 $amount = $validatedData['amount'];
 
-                if ($validatedData['category'] == "0") {
+                if ($validatedData['category'] == "0") { 
                     if ($amount > $checkRecord->amount) {
                         return redirect()->back()->with('warning', 'Insufficient balance for withdrawal.');
                     }
@@ -89,6 +90,7 @@ class SavingController extends Controller
                     $checkRecord->amount += $amount;
                 }
 
+                $checkRecord->date = $validatedData['date'] ??  null;
                 $checkRecord->note = $validatedData['note'] ?? null;
 
                 $checkRecord->save();

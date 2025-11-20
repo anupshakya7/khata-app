@@ -45,25 +45,25 @@
                                 @forelse ($histories as $history)
                                     <tr>
                                         <td> {{ $sno++ }}</td>
-                                        <td>{{$history->amount}}</td>
-                                        <td>{{Carbon\Carbon::parse($history->created_at)->format('d M, Y')}}</td>
+                                        <td>{{ $history->amount }}</td>
+                                        <td>{{ \App\Helpers\ConvertToBS::convert($history->date); }}</td>
                                         @php
-                                            if($history->category == 0){
+                                            if ($history->category == 0) {
                                                 $color = 'danger';
                                                 $type = 'Withdraw';
-                                                $totalAmount -=$history->amount;
-                                            }elseif($history->category == 1){
+                                                $totalAmount -= $history->amount;
+                                            } elseif ($history->category == 1) {
                                                 $color = 'success';
                                                 $type = 'Deposit';
-                                                $totalAmount +=$history->amount;
-                                            }elseif($history->category == 2){
+                                                $totalAmount += $history->amount;
+                                            } elseif ($history->category == 2) {
                                                 $color = 'primary';
                                                 $type = 'Paid Withdrawal';
-                                                $totalAmount +=$history->amount;
+                                                $totalAmount += $history->amount;
                                             }
                                         @endphp
                                         <td>
-                                            <span class="badge bg-{{ $color }}">{{$type}}</span>
+                                            <span class="badge bg-{{ $color }}">{{ $type }}</span>
                                         </td>
                                     </tr>
                                 @empty
@@ -73,8 +73,12 @@
                                 @endforelse
                                 <tr style="border-top: 2px solid grey;">
                                     <td><b>Total</b></td>
-                                    <td>{{$totalAmount}}</td>
-                                    <td>{{now()->format('d M, Y')}}</td>
+                                    <td>{{ $totalAmount }}</td>
+                                    @php
+                                        $today = now()->subDay(1)->toBS();
+                                        $bsDate = \App\Helpers\ConvertToBS::convert($today->date);
+                                    @endphp
+                                    <td>{{ $bsDate }}</td>
                                     <td><b>Total</b></td>
                                 </tr>
                             </tbody><!-- end tbody -->
